@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>钢铁突袭 · 3D 魂斗罗</title>
+<link rel="stylesheet" href="./style.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three.module.js"
+  }
+}
+</script>
+</head>
+<body>
+<div id="app">
+  <canvas id="game"></canvas>
+
+  <!-- ============ HUD ============ -->
+  <div id="hud" class="hidden">
+    <div class="hud-left">
+      <div class="hud-row">
+        <span class="hud-label">分数</span>
+        <span id="hud-score" class="hud-value">0</span>
+      </div>
+      <div class="hud-row">
+        <span class="hud-label">剩余</span>
+        <span id="hud-remaining" class="hud-value">0</span>
+      </div>
+      <div class="hud-row lives">
+        <span class="hud-label">生命</span>
+        <span id="hud-lives" class="lives-icons"></span>
+      </div>
+    </div>
+
+    <div class="hud-center">
+      <div id="hud-weapon" class="weapon-tag">M 机枪</div>
+      <div class="hp-wrap">
+        <div class="hp-bar"><div id="hud-hp-fill"></div></div>
+        <span id="hud-hp-text">2 / 2</span>
+      </div>
+    </div>
+
+    <div class="hud-right">
+      <div class="hud-row right">
+        <span class="hud-label">关卡</span>
+        <span id="hud-stage" class="hud-value">1</span>
+      </div>
+      <div class="hud-row right">
+        <span class="hud-label">得分段</span>
+        <span id="hud-combo" class="hud-value">x1</span>
+      </div>
+    </div>
+
+    <div id="boss-bar" class="hidden">
+      <div class="boss-name">铁壁 · 重装机甲</div>
+      <div class="boss-track"><div id="boss-fill"></div></div>
+    </div>
+
+    <div id="toast"></div>
+  </div>
+
+  <!-- ============ 开始界面 ============ -->
+  <div id="screen-start" class="screen">
+    <div class="panel">
+      <h1>钢铁突袭</h1>
+      <p class="sub">3D 魂斗罗 · RUN &amp; GUN</p>
+      <div class="keys">
+        <div><b>A / D</b> 或 <b>← →</b><span>左右推进</span></div>
+        <div><b>W / S</b> 或 <b>↑ ↓</b><span>纵深移动（战场有纵深轴）</span></div>
+        <div><b>鼠标</b><span>瞄准方向</span></div>
+        <div><b>左键 / J</b><span>射击（可边跑边打）</span></div>
+        <div><b>空格 / K</b><span>跳跃</span></div>
+        <div><b>Shift / L</b><span>卧倒（低姿射击，可躲弹）</span></div>
+        <div><b>P</b><span>暂停</span></div>
+        <div><b>M</b><span>静音</span></div>
+      </div>
+      <p class="tip">提示：子弹会穿过纵深层，敌人躲在掩体后可以减少伤害来源；<b>跳跃射击</b>能越过矮掩体。</p>
+      <button id="btn-start" class="btn">开始游戏</button>
+      <div class="options">
+        <label><input type="checkbox" id="opt-autoaim" checked> 自动辅助瞄准纵深</label>
+        <label><input type="checkbox" id="opt-music"> 背景音乐</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 暂停 ============ -->
+  <div id="screen-pause" class="screen hidden">
+    <div class="panel small">
+      <h2>暂停</h2>
+      <button id="btn-resume" class="btn">继续</button>
+      <button id="btn-restart" class="btn ghost">重新开始</button>
+    </div>
+  </div>
+
+  <!-- ============ 结算 ============ -->
+  <div id="screen-over" class="screen hidden">
+    <div class="panel small">
+      <h2 id="over-title">任务失败</h2>
+      <p id="over-sub" class="sub"></p>
+      <div id="over-stats" class="stats"></div>
+      <button id="btn-again" class="btn">再来一次</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>
