@@ -8,6 +8,16 @@ export class Input {
     this.mouse = { x: 0, y: 0, ndcX: 0, ndcY: 0, down: false, clicked: false };
     this.anyKeyFlag = false;
 
+    // 触控状态（由 TouchControls 每帧写入）
+    this.touchMove = { x: 0, z: 0 };
+    this.touchFiring = false;
+    this.touchAimActive = false;
+    this.touchNdcX = 0;
+    this.touchNdcY = 0;
+    this.touchJump = false;
+    this.touchJumpEdge = false;
+    this.touchProne = false;
+
     this._onKeyDown = (e) => {
       const code = e.code;
       if (!this.keys.has(code)) this.pressed.add(code);
@@ -49,6 +59,7 @@ export class Input {
   endFrame() {
     this.pressed.clear();
     this.mouse.clicked = false;
+    this.touchJumpEdge = false;
   }
 
   /** 读取移动轴：x = 左右(沿走廊)，z = 纵深 */
@@ -58,16 +69,27 @@ export class Input {
     if (this.down('KeyD') || this.down('ArrowRight')) x += 1;
     if (this.down('KeyW') || this.down('ArrowUp')) z -= 1;
     if (this.down('KeyS') || this.down('ArrowDown')) z += 1;
+    // 触控摇杆优先（数值型，可与键盘叠加但通常只用一种）
+    if (this.touchMove.x !== 0 || this.touchMove.z !== 0) {
+      x = this.touchMove.x;
+      z = this.touchMove.z;
+    }
     return { x, z };
   }
 
   firing() {
-    return this.mouse.down || this.down('KeyJ');
+    return this.mouse.down || this.down('KeyJ') || this.touchFiring;
   }
   jumpPressed() {
-    return this.justPressed('Space') || this.justPressed('KeyK');
+    return this.justPressed('Space') || this.justPressed('KeyK') || this.touchJumpEdge;
   }
   proneDown() {
-    return this.down('ShiftLeft') || this.down('ShiftRight') || this.down('KeyL');
+    return this.down('ShiftLeft') || this.down('ShiftRight') || this.down('KeyL') || this.touchProne;
+  }
+
+  /** 瞄准用的 NDC 坐标（触控优先） */
+  aimNdc() {
+    if (this.touchAimActive) return { x: this.touchNdcX, y: this.touchNdcY };
+    return { x: this.mouse.ndcX, y: this.mouse.ndcY };
   }
 }

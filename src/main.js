@@ -2,6 +2,7 @@
 
 import * as THREE from 'three';
 import { Input } from './input.js';
+import { TouchControls } from './touch.js';
 import { Audio } from './audio.js';
 import { Effects } from './effects.js';
 import { Bullets, BULLET } from './bullets.js';
@@ -90,6 +91,13 @@ scene.add(fill);
 // 系统实例
 // ------------------------------------------------------------------
 const input = new Input(canvas);
+const touch = new TouchControls(canvas, input);
+// 触屏设备启用触控层，并切换开始界面的键位说明
+if (TouchControls.shouldEnable()) {
+  touch.enable();
+  document.getElementById('keys-desktop').classList.add('hidden');
+  document.getElementById('keys-touch').classList.remove('hidden');
+}
 const audio = new Audio();
 const effects = new Effects(scene);
 const bullets = new Bullets(scene, effects, audio);
@@ -417,6 +425,9 @@ function frame(now) {
     audio.setMuted(!audio.muted);
     toast(audio.muted ? '静音' : '恢复音效');
   }
+
+  // 触控状态每帧同步（菜单态也要更新，进去才不丢坐标）
+  touch.applyTo(input);
 
   if (G.state === 'playing') {
     G.time += dt;

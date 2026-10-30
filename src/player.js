@@ -86,9 +86,10 @@ export class Player {
 
   get isFiring() { return this.weaponTimer > 0; }
 
-  /** 计算鼠标指向的世界 XZ 方向 */
+  /** 计算鼠标/触点指向的世界 XZ 方向 */
   computeAim(camera, input) {
-    const ndc = new THREE.Vector2(input.mouse.ndcX, input.mouse.ndcY);
+    const n = input.aimNdc();
+    const ndc = new THREE.Vector2(n.x, n.y);
     const ray = new THREE.Raycaster();
     ray.setFromCamera(ndc, camera);
     // 射线与 y=1.1 平面求交

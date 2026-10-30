@@ -66,7 +66,7 @@
     <div class="panel">
       <h1>钢铁突袭</h1>
       <p class="sub">3D 魂斗罗 · RUN &amp; GUN</p>
-      <div class="keys">
+      <div class="keys" id="keys-desktop">
         <div><b>A / D</b> 或 <b>← →</b><span>左右推进</span></div>
         <div><b>W / S</b> 或 <b>↑ ↓</b><span>纵深移动（战场有纵深轴）</span></div>
         <div><b>鼠标</b><span>瞄准方向</span></div>
@@ -75,6 +75,12 @@
         <div><b>Shift / L</b><span>卧倒（低姿射击，可躲弹）</span></div>
         <div><b>P</b><span>暂停</span></div>
         <div><b>M</b><span>静音</span></div>
+      </div>
+      <div class="keys hidden" id="keys-touch">
+        <div><b>左半屏</b><span>拖动虚拟摇杆移动</span></div>
+        <div><b>右半屏</b><span>按住即朝该方向射击</span></div>
+        <div><b>跳跃键</b><span>跳过矮掩体</span></div>
+        <div><b>卧倒键</b><span>切换低姿，躲避正面弹道</span></div>
       </div>
       <p class="tip">提示：子弹会穿过纵深层，敌人躲在掩体后可以减少伤害来源；<b>跳跃射击</b>能越过矮掩体。</p>
       <button id="btn-start" class="btn">开始游戏</button>
@@ -102,6 +108,24 @@
       <div id="over-stats" class="stats"></div>
       <button id="btn-again" class="btn">再来一次</button>
     </div>
+  </div>
+
+  <!-- ============ 移动端触控层 ============ -->
+  <div id="touch-ui" class="hidden">
+    <div id="tc-stick"><div id="tc-knob"></div></div>
+    <div id="tc-aimdot"></div>
+    <div id="tc-buttons">
+      <button id="tc-prone" class="tc-btn">卧倒</button>
+      <button id="tc-jump" class="tc-btn">跳跃</button>
+    </div>
+    <div id="tc-hint">左半屏拖动移动 · 右半屏按住射击</div>
+  </div>
+
+  <!-- ============ 竖屏提示 ============ -->
+  <div id="rotate-hint">
+    <div class="rh-icon">📱</div>
+    <p>请横屏游玩</p>
+    <p style="font-size:12px;color:#6b7d92">横屏后左半屏移动，右半屏射击</p>
   </div>
 </div>
 

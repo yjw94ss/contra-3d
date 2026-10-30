@@ -212,3 +212,149 @@ html, body {
   border-radius: 6px;
 }
 .stats span:last-child { color: var(--gold); font-weight: 700; }
+
+/* ================= 移动端触控层 ================= */
+#touch-ui {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  touch-action: none;
+}
+
+#tc-stick {
+  position: absolute;
+  width: 0; height: 0;
+  opacity: 0;
+  transition: opacity .12s;
+  pointer-events: none;
+}
+
+#tc-stick::before {
+  content: '';
+  position: absolute;
+  left: -62px; top: -62px;
+  width: 124px; height: 124px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.035);
+}
+
+#tc-knob {
+  position: absolute;
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, rgba(255,255,255,.82), rgba(255,204,51,.42));
+  border: 1.5px solid rgba(255,255,255,.42);
+  box-shadow: 0 0 14px rgba(255,204,51,.35);
+  pointer-events: none;
+}
+
+#tc-aimdot {
+  position: absolute;
+  width: 46px; height: 46px;
+  margin: -23px 0 0 -23px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,110,80,.9);
+  background: radial-gradient(circle, rgba(255,90,60,.28), rgba(255,90,60,0) 70%);
+  opacity: 0;
+  transition: opacity .1s;
+  pointer-events: none;
+}
+
+#tc-aimdot::after {
+  content: '';
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 6px; height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: rgba(255,120,80,.95);
+}
+
+#tc-buttons {
+  position: absolute;
+  right: 22px; bottom: 88px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-end;
+  pointer-events: none;
+}
+
+.tc-btn {
+  pointer-events: auto;
+  width: 78px; height: 78px;
+  border-radius: 50%;
+  font-family: inherit;
+  font-size: 15px; font-weight: 700; letter-spacing: 2px;
+  color: #fff;
+  background: rgba(255,255,255,.10);
+  border: 2px solid rgba(255,255,255,.32);
+  backdrop-filter: blur(4px);
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.tc-btn:active {
+  background: rgba(255,204,51,.34);
+  border-color: rgba(255,204,51,.85);
+  transform: scale(.93);
+}
+.tc-btn.active {
+  background: rgba(255,204,51,.34);
+  border-color: rgba(255,204,51,.9);
+  color: #ffe9a8;
+  box-shadow: 0 0 16px rgba(255,204,51,.4);
+}
+#tc-jump {
+  width: 94px; height: 94px;
+  background: rgba(255,204,51,.16);
+  border-color: rgba(255,204,51,.45);
+}
+
+#tc-hint {
+  position: absolute;
+  left: 50%; bottom: 22px;
+  transform: translateX(-50%);
+  font-size: 12px; letter-spacing: 2px;
+  color: rgba(255,255,255,.5);
+  white-space: nowrap;
+  pointer-events: none;
+  animation: tcFade 5s forwards;
+}
+@keyframes tcFade {
+  0%, 70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* 触控模式：隐藏鼠标准星 */
+body.touch-mode #game { cursor: none; }
+
+/* 移动端竖屏提示 */
+#rotate-hint {
+  position: absolute; inset: 0;
+  display: none;
+  align-items: center; justify-content: center;
+  flex-direction: column; gap: 16px;
+  background: #05070c;
+  z-index: 50;
+  text-align: center;
+}
+#rotate-hint .rh-icon { font-size: 56px; }
+#rotate-hint p { font-size: 15px; letter-spacing: 3px; color: #9db0c6; }
+
+@media (orientation: portrait) and (pointer: coarse) {
+  #rotate-hint { display: flex; }
+}
+
+/* 小屏适配 */
+@media (max-width: 860px) {
+  .panel h1 { font-size: 36px; letter-spacing: 6px; }
+  .keys { grid-template-columns: 1fr; font-size: 12px; }
+  .keys b { min-width: 76px; }
+  .hud-value { font-size: 16px; }
+  .hp-bar { width: 150px; }
+  #boss-bar { width: 70%; }
+  #toast { font-size: 22px; }
+}
