@@ -46,6 +46,7 @@
       <div class="hud-row right">
         <span class="hud-label">关卡</span>
         <span id="hud-stage" class="hud-value">1</span>
+        <span id="hud-stage-name" class="hud-stage-name">前沿哨站</span>
       </div>
       <div class="hud-row right">
         <span class="hud-label">得分段</span>
@@ -59,6 +60,28 @@
     </div>
 
     <div id="toast"></div>
+  </div>
+
+  <!-- ============ 关卡过场 ============ -->
+  <div id="stage-intro" class="hidden">
+    <div class="si-bar si-bar-top"></div>
+    <div class="si-body">
+      <div class="si-no">第 <span id="si-num">1</span> 关</div>
+      <div id="si-name" class="si-name">前沿哨站</div>
+      <div id="si-sub" class="si-sub">敌方先遣队在此集结</div>
+      <div id="si-boss" class="si-boss">敌方 BOSS · 铁壁</div>
+    </div>
+    <div class="si-bar si-bar-bottom"></div>
+  </div>
+
+  <!-- ============ 通关结算 ============ -->
+  <div id="screen-clear" class="screen hidden">
+    <div class="panel small">
+      <h2 id="clear-title">区域肃清</h2>
+      <p id="clear-sub" class="sub"></p>
+      <div id="clear-stats" class="stats"></div>
+      <button id="btn-next" class="btn">进入下一关</button>
+    </div>
   </div>
 
   <!-- ============ 开始界面 ============ -->

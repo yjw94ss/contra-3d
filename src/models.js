@@ -1,6 +1,7 @@
 // models.js —— 纯几何体搭建场景与角色（无外部资源）
 
 import * as THREE from 'three';
+import { rand } from './util.js';
 
 const _v = new THREE.Vector3();
 
@@ -260,9 +261,56 @@ export function makeHoverTurret() {
   return g;
 }
 
-/** 木箱掩体 */
-export function makeCrate() {
+/** 工业支架 / 电线杆（工业、熔岩、终焉主题用） */
+export function makePylon() {
   const g = new THREE.Group();
+  const metal = new THREE.MeshStandardMaterial({ color: 0x5a6472, metalness: 0.68, roughness: 0.45 });
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.18, 5.2, 7), metal);
+  pole.position.y = 2.6;
+  g.add(pole);
+  const armGeo = new THREE.BoxGeometry(2.6, 0.14, 0.14);
+  for (const y of [4.3, 3.6]) {
+    const arm = new THREE.Mesh(armGeo, metal);
+    arm.position.y = y;
+    g.add(arm);
+  }
+  // 顶部警示灯
+  const lamp = new THREE.Mesh(
+    new THREE.SphereGeometry(0.13, 8, 6),
+    new THREE.MeshStandardMaterial({ color: 0xff5030, emissive: 0xff2200, emissiveIntensity: 2.2 })
+  );
+  lamp.position.y = 5.25;
+  g.add(lamp);
+  // 底座
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.52, 0.4, 8), metal);
+  base.position.y = 0.2;
+  g.add(base);
+  g.traverse((o) => { if (o.isMesh) o.castShadow = true; });
+  return g;
+}
+
+/** 横躺的管道（工业、雪地主题用） */
+export function makePipe() {
+  const g = new THREE.Group();
+  const mat = new THREE.MeshStandardMaterial({ color: 0x6e7684, metalness: 0.6, roughness: 0.5 });
+  const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 4.2, 10), mat);
+  pipe.rotation.z = Math.PI / 2;
+  pipe.position.y = 0.42;
+  g.add(pipe);
+  // 法兰
+  const flangeGeo = new THREE.CylinderGeometry(0.52, 0.52, 0.16, 10);
+  for (const x of [-1.6, 1.6]) {
+    const f = new THREE.Mesh(flangeGeo, mat);
+    f.rotation.z = Math.PI / 2;
+    f.position.set(x, 0.42, 0);
+    g.add(f);
+  }
+  g.traverse((o) => { if (o.isMesh) o.castShadow = true; });
+  return g;
+}
+
+/** 木箱掩体 */
+export function makeCrate() {  const g = new THREE.Group();
   const body = new THREE.Mesh(
     new THREE.BoxGeometry(1.5, 1.4, 1.5),
     new THREE.MeshStandardMaterial({ color: 0x8a6134, roughness: 0.9 })
@@ -376,10 +424,12 @@ export function makePickup(kind) {
 /** 地形：主地面 + 侧墙 + 远景山丘
  *  @param {number} length  地面长度
  *  @param {number} centerX 地面中心 X（保证关卡全长都在地面上）
+ *  @param {object} theme  主题配色（来自 stages.js）
  */
-export function makeTerrain(length = 400, centerX = 0) {
+export function makeTerrain(length = 400, centerX = 0, theme = null) {
   const g = new THREE.Group();
-  const groundMat = new THREE.MeshStandardMaterial({ color: 0x4a5a46, roughness: 0.96 });
+  const T = theme || {};
+  const groundMat = new THREE.MeshStandardMaterial({ color: T.ground ?? 0x4a5a46, roughness: 0.96 });
   const ground = new THREE.Mesh(new THREE.PlaneGeometry(length, 52), groundMat);
   ground.rotation.x = -Math.PI / 2;
   ground.position.x = centerX;
@@ -387,7 +437,7 @@ export function makeTerrain(length = 400, centerX = 0) {
   g.add(ground);
 
   // 车道（略高一层，颜色不同，走起来有层次）
-  const roadMat = new THREE.MeshStandardMaterial({ color: 0x5a5a64, roughness: 0.95 });
+  const roadMat = new THREE.MeshStandardMaterial({ color: T.road ?? 0x5a5a64, roughness: 0.95 });
   const road = new THREE.Mesh(new THREE.PlaneGeometry(length, 15), roadMat);
   road.rotation.x = -Math.PI / 2;
   road.position.set(centerX, 0.02, 0);
@@ -395,7 +445,7 @@ export function makeTerrain(length = 400, centerX = 0) {
   g.add(road);
 
   // 侧墙
-  const wallMat = new THREE.MeshStandardMaterial({ color: 0x39424e, roughness: 0.9 });
+  const wallMat = new THREE.MeshStandardMaterial({ color: T.wall ?? 0x39424e, roughness: 0.9 });
   for (const z of [-11.6, 11.6]) {
     const wall = new THREE.Mesh(new THREE.BoxGeometry(length, 2.6, 1.2), wallMat);
     wall.position.set(centerX, 1.3, z);
@@ -404,33 +454,63 @@ export function makeTerrain(length = 400, centerX = 0) {
 
   // 远景山丘（视差背景）
   const x0 = centerX - length / 2;
-  const hillMat = new THREE.MeshStandardMaterial({ color: 0x33424f, roughness: 1, flatShading: true });
+  const hillMat = new THREE.MeshStandardMaterial({ color: T.hill ?? 0x33424f, roughness: 1, flatShading: true });
   for (let i = 0; i < 40; i++) {
     const h = new THREE.Mesh(new THREE.ConeGeometry(6 + Math.random() * 9, 7 + Math.random() * 13, 5), hillMat);
     h.position.set(x0 + Math.random() * length, 2 + Math.random() * 3, -34 - Math.random() * 46);
     g.add(h);
   }
-  const hillMat2 = new THREE.MeshStandardMaterial({ color: 0x2a3742, roughness: 1, flatShading: true });
+  const hillMat2 = new THREE.MeshStandardMaterial({ color: T.hillFar ?? 0x2a3742, roughness: 1, flatShading: true });
   for (let i = 0; i < 32; i++) {
     const h = new THREE.Mesh(new THREE.ConeGeometry(8 + Math.random() * 11, 9 + Math.random() * 15, 6), hillMat2);
     h.position.set(x0 + Math.random() * length, 2 + Math.random() * 4, 36 + Math.random() * 44);
     g.add(h);
   }
 
-  // 星空
-  const starGeo = new THREE.BufferGeometry();
-  const N = 900;
-  const pos = new Float32Array(N * 3);
-  for (let i = 0; i < N; i++) {
-    pos[i * 3] = (Math.random() - 0.5) * 900;
-    pos[i * 3 + 1] = 40 + Math.random() * 190;
-    pos[i * 3 + 2] = (Math.random() - 0.5) * 900;
+  // 星空（仅夜景主题）
+  if (!theme || theme.theme !== 'lava') {
+    const starGeo = new THREE.BufferGeometry();
+    const N = 900;
+    const pos = new Float32Array(N * 3);
+    for (let i = 0; i < N; i++) {
+      pos[i * 3] = (Math.random() - 0.5) * 900;
+      pos[i * 3 + 1] = 40 + Math.random() * 190;
+      pos[i * 3 + 2] = (Math.random() - 0.5) * 900;
+    }
+    starGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({
+      color: 0xffffff, size: 1.6, sizeAttenuation: false, transparent: true, opacity: 0.85,
+    }));
+    g.add(stars);
   }
-  starGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({
-    color: 0xffffff, size: 1.6, sizeAttenuation: false, transparent: true, opacity: 0.85,
-  }));
-  g.add(stars);
+
+  // 主题化环境粒子（雪/火星/沙尘）
+  const weather = T.theme;
+  if (weather === 'snow' || weather === 'lava' || weather === 'desert') {
+    const count = weather === 'snow' ? 1400 : 900;
+    const pGeo = new THREE.BufferGeometry();
+    const pPos = new Float32Array(count * 3);
+    const pVel = new Float32Array(count);
+    for (let i = 0; i < count; i++) {
+      pPos[i * 3] = (Math.random() - 0.5) * 160;
+      pPos[i * 3 + 1] = Math.random() * 40;
+      pPos[i * 3 + 2] = (Math.random() - 0.5) * 60;
+      pVel[i] = weather === 'snow' ? rand(1.4, 0.4) : weather === 'lava' ? rand(4.5, 1.5) : rand(0.7, 0.1);
+    }
+    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+    const pColor = weather === 'snow' ? 0xffffff : weather === 'lava' ? 0xff7020 : 0xd8c090;
+    const pSize = weather === 'snow' ? 1.4 : weather === 'lava' ? 2.2 : 1.0;
+    const pts = new THREE.Points(pGeo, new THREE.PointsMaterial({
+      color: pColor, size: pSize, sizeAttenuation: false,
+      transparent: true, opacity: weather === 'snow' ? 0.7 : 0.55,
+      blending: weather === 'lava' ? THREE.AdditiveBlending : THREE.NormalBlending,
+      depthWrite: false,
+    }));
+    pts.userData.vel = pVel;
+    pts.userData.kind = weather;
+    g.add(pts);
+    g.userData.weather = pts;
+  }
 
   return g;
 }

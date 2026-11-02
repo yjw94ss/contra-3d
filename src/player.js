@@ -33,7 +33,7 @@ export class Player {
     this.dead = false;
 
     this.hp = 3;
-    this.maxHp = 3;
+    this.maxHp = 8;
     this.lives = 3;
     this.invuln = 0;
     this.prone = false;
@@ -373,7 +373,7 @@ export class Player {
   hurt(amount = 1) {
     if (this.invuln > 0 || this.dead) return false;
     this.hp -= amount;
-    this.invuln = 0.85;
+    this.invuln = 1.15;
     this.hurtFlash = 0.35;
     this.combo = 0;
     this.comboTimer = 0;
@@ -381,7 +381,7 @@ export class Player {
     this.fx.addShake(0.55);
     if (this.hp <= 0) {
       this.hp = 0;
-      this.lives--;
+      this.lives = Math.max(0, this.lives - 1);
       if (this.lives <= 0) {
         this.die();
       } else {

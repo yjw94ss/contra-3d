@@ -118,9 +118,9 @@ export class Bullets {
       // 与 BOSS 碰撞（连续检测：防止高速子弹穿过目标）
       if (b.fromPlayer && boss && !boss.dead && boss.hitTest) {
         let r = { hit: false, crit: false };
-        // 沿上一帧→当前位置的线段采样 4 个点
-        for (let s = 1; s <= 4; s++) {
-          const t = s / 4;
+        // 沿上一帧→当前位置的线段采样 6 个点（高速时减少漏判）
+        for (let s = 1; s <= 6; s++) {
+          const t = s / 6;
           _v.lerpVectors(_prev, b.mesh.position, t);
           r = boss.hitTest(_v);
           if (r.hit) break;

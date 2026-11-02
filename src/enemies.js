@@ -339,7 +339,7 @@ export class Enemy {
     }
     // 得分
     if (ctx && ctx.addScore) {
-      ctx.addScore(this.def.score, this.pos);
+      ctx.addScore(this.def.score, this.pos, { kill: true });
     }
   }
 }
